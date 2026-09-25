@@ -23,10 +23,14 @@ The checked-in `config.js` is an empty local default. For a configured local bui
 
 ## Supabase setup
 
-1. Create a Supabase project on the free tier and keep its database password and service-role key private.
+1. The Supabase free-tier project for this deployment is `lyvor.admin` (`irhrourclnzpbyujeefa`) in South Asia (Mumbai). Keep its database password and service-role key private.
 2. In the Supabase SQL editor, run [`supabase/schema.sql`](supabase/schema.sql), then [`supabase/seed.sql`](supabase/seed.sql). The schema creates the tables, indexes, auth profile trigger, role checks, Row Level Security policies, secure order and cancellation functions, coupon validation, and transactional stock and total checks.
-3. For local development, pass your **Project URL** and **anon/public key** through `SUPABASE_URL` and `SUPABASE_ANON_KEY` when building. Never put the service-role key in browser config.
-4. In Supabase Authentication settings, set the Site URL to your deployed site and add the exact Pages origin and path to the allowed redirect URLs. Enable email confirmation for customer registration if desired. The seeded administrator is explicitly email-confirmed by the local seeding script.
+3. The public frontend values for this project are:
+   - `SUPABASE_URL`: `https://irhrourclnzpbyujeefa.supabase.co`
+   - `SUPABASE_ANON_KEY`: `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlyaHJvdXJjbG56cGJ5dWplZWZhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAzNTUyMjEsImV4cCI6MjEwNTkzMTIyMX0.BWC9RcfTNeAsDcrnCiyU4uq-jmOBH7R3eCirFSX9zcQ`
+
+   The anon key is public and is safe in browser builds only because Row Level Security is enabled and the policies below restrict access. Never put the service-role key in browser config.
+4. Supabase Authentication is configured with the deployed Pages Site URL (`https://princeoffice.github.io/lyvor.in/`) and allowed redirect `https://princeoffice.github.io/lyvor.in/**`. Enable email confirmation for customer registration if desired. The seeded administrator is explicitly email-confirmed by the local seeding script.
 5. Create the initial administrator from a trusted local PowerShell session. Enter the service-role key and initial password at hidden prompts so they remain in that session's environment only:
 
    ```powershell
@@ -51,7 +55,7 @@ The checked-in `config.js` is an empty local default. For a configured local bui
 
 ## Build and deploy to GitHub Pages
 
-The checked-in workflow at [`.github/workflows/pages.yml`](.github/workflows/pages.yml) builds the static site and deploys it on pushes to `main`. It writes the public Supabase URL and anon key into the built `config.js` from GitHub Actions secrets. Set repository secrets named `SUPABASE_URL` and `SUPABASE_ANON_KEY` if the live Pages site should use Supabase. If they are not set, Pages deploys in clearly labelled local-preview mode.
+The checked-in workflow at [`.github/workflows/pages.yml`](.github/workflows/pages.yml) builds the static site and deploys it on pushes to `main`. The public values above are configured as repository Actions secrets named `SUPABASE_URL` and `SUPABASE_ANON_KEY`; the workflow writes them into the built `config.js`. If those secrets are absent, Pages deploys in clearly labelled local-preview mode.
 
 The build uses relative asset paths, so a project Pages address such as `https://OWNER.github.io/lyvor.in/` works without assuming that `lyvor.in` is a configured custom domain. GitHub Pages must be enabled with **GitHub Actions** as the build and deployment source. The workflow does not need or receive the Supabase service-role key.
 

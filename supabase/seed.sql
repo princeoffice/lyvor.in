@@ -30,7 +30,7 @@ with catalog(slug,category_slug,name,description,material,price,compare_at_price
 )
 insert into public.product_variants(product_id,size,color,color_hex,stock)
 select p.id,s.size,co->>'name',co->>'hex',case when s.size='One size' then 18 else 8 end
-from catalog c join public.products p on p.slug=c.slug
+from catalog c join upserted p on p.slug=c.slug
 cross join lateral unnest(c.sizes) s(size)
 cross join lateral jsonb_array_elements(c.colors) co
 on conflict(product_id,size,color) do update set color_hex=excluded.color_hex;
